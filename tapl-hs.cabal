@@ -60,6 +60,7 @@ library
     -- Modules exported by the library.
     exposed-modules:  
         Arith.Syntax
+        Arith.Eval
 
     -- Modules included in this library but not exported.
     -- other-modules:
