@@ -1,5 +1,7 @@
 module Arith.Eval (
     eval1,
+    eval,
+    evalSteps
 ) where
 
 import Arith.Syntax
@@ -30,3 +32,9 @@ eval1 (TmPred t1) = TmPred <$> eval1 t1
 eval1 (TmIsZero t1) = TmIsZero <$> eval1 t1
 -- Value or Stuck Term
 eval1 (_) = Nothing
+
+eval :: Term -> Term
+eval t = maybe t eval (eval1 t)
+    
+evalSteps :: Term -> [Term]
+evalSteps t = t : maybe [] evalSteps (eval1 t)
