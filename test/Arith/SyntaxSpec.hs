@@ -54,3 +54,31 @@ spec = do
 
     it "succ true is not a value" $
       isVal (TmSucc TmTrue) `shouldBe` False
+
+  describe "pretty" $ do
+    it "prints constants" $ do
+      pretty TmTrue `shouldBe` "true"
+      pretty TmFalse `shouldBe` "false"
+      pretty TmZero `shouldBe` "0"
+
+    it "does not parenthesize atomic arguments" $ do
+      pretty (TmSucc TmZero) `shouldBe` "succ 0"
+      pretty (TmPred TmZero) `shouldBe` "pred 0"
+      pretty (TmIsZero TmZero) `shouldBe` "iszero 0"
+      pretty (TmSucc TmTrue) `shouldBe` "succ true"
+
+    it "parenthesizes compound arguments" $ do
+      pretty (TmSucc (TmSucc TmZero)) `shouldBe` "succ (succ 0)"
+      pretty (TmPred (TmSucc TmZero)) `shouldBe` "pred (succ 0)"
+      pretty (TmIsZero (TmPred (TmSucc TmZero)))
+        `shouldBe` "iszero (pred (succ 0))"
+      pretty (TmSucc (TmIf TmTrue TmZero TmZero))
+        `shouldBe` "succ (if true then 0 else 0)"
+
+    it "prints if without parentheses around its parts" $
+      pretty (TmIf (TmIsZero TmZero) (TmSucc TmZero) TmZero)
+        `shouldBe` "if iszero 0 then succ 0 else 0"
+
+    it "prints nested if" $
+      pretty (TmIf (TmIf TmTrue TmFalse TmTrue) TmZero (TmSucc TmZero))
+        `shouldBe` "if if true then false else true then 0 else succ 0"
