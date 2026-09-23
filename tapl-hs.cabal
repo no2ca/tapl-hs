@@ -61,6 +61,7 @@ library
     exposed-modules:  
         Arith.Syntax
         Arith.Eval
+        SExpr
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -112,6 +113,7 @@ test-suite tapl-hs-test
     other-modules:
         Arith.SyntaxSpec
         Arith.EvalSpec
+        SExprSpec
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
