@@ -61,6 +61,7 @@ library
     exposed-modules:  
         Arith.Syntax
         Arith.Eval
+        Arith.Parser
         SExpr
 
     -- Modules included in this library but not exported.
