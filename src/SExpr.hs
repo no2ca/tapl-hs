@@ -10,6 +10,8 @@ data SExpr
 data Token = TLParen | TRParen | TAtom String
     deriving (Show, Eq)
 
+-- トークナイザ
+-- 文字列を受け取ってトークン化する
 tokenize :: String -> [Token]
 tokenize [] = []
 tokenize (c : cs)
@@ -23,14 +25,14 @@ tokenize (c : cs)
   where
     isDelimiter x = isSpace x || x == '(' || x == ')'
 
--- S式を1つ読み、消費しなかったトークンと一緒に返す
+-- S式を1つ読み消費しなかったトークンと一緒に返す
 parseOne :: [Token] -> Either String (SExpr, [Token])
 parseOne [] = Left "unexpected end of input"
 parseOne (TAtom s : rest) = Right (Atom s, rest)
 parseOne (TRParen : _) = Left "unexpected ')'"
 parseOne (TLParen : rest) = parseList [] rest
 
--- '('の直後から')'までの要素を集める
+-- '(' の直後から ')' までの要素を集める
 parseList :: [SExpr] -> [Token] -> Either String (SExpr, [Token])
 parseList acc (TRParen : rest) = Right (List (reverse acc), rest)
 parseList acc ts = do
