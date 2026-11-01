@@ -1,25 +1,21 @@
 module Main (main) where
 
 import Arith.Eval
+import Arith.Parser
 import Arith.Syntax
+import SExpr
+import System.IO (hPutStrLn, stderr)
 
 main :: IO ()
 main = do
   putStrLn $ replicate 16 '='
   putStrLn "[Evaluating arithmetic expression samples]"
-  mapM_ runSample samples
+  -- mapM_ runSample samples
+  run
+    "(if (iszero (pred (succ 0))) true false)"
 
--- prints the evaluation trace of a term, one step per line
-runSample :: Term -> IO ()
-runSample t = do
-  putStrLn (pretty t)
-  mapM_ (putStrLn . ("  -> " ++) . pretty) (drop 1 (evalSteps t))
-  putStrLn ""
-
-samples :: [Term]
-samples =
-  [ TmIf (TmIsZero (TmPred (TmSucc TmZero))) (TmSucc TmZero) TmZero
-  , TmPred (TmSucc (TmPred TmZero))
-  , TmIf (TmIf TmTrue TmFalse TmTrue) (TmSucc TmZero) (TmSucc (TmSucc TmZero))
-  , TmSucc (TmIsZero (TmPred (TmSucc TmZero)))
-  ]
+run :: String -> IO ()
+run s = do
+  case pretty . eval <$> (parseSExpr s >>= parse) of
+    Right r -> putStrLn r
+    Left e -> hPutStrLn stderr e
