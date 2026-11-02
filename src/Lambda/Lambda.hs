@@ -8,5 +8,5 @@ data Term
 
 eval1 :: Term -> Maybe Term
 -- E-App1
-eval1 (TmApp t1 t2) = TmApp <$> eval1 t1 <*> pure t2
+eval1 (TmApp t1 t2) = (\t1' -> TmApp t1' t2) <$> eval1 t1
 eval1 _ = Nothing
