@@ -62,6 +62,7 @@ library
         Arith.Syntax
         Arith.Eval
         Arith.Parser
+        Lambda.Lambda
         SExpr
 
     -- Modules included in this library but not exported.
