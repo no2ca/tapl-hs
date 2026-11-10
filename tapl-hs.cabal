@@ -116,6 +116,7 @@ test-suite tapl-hs-test
         Arith.SyntaxSpec
         Arith.EvalSpec
         SExprSpec
+        Lambda.LambdaSpec
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
