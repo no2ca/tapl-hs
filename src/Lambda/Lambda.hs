@@ -11,17 +11,20 @@ eval1 :: Term -> Maybe Term
 eval1 (TmApp t1 t2) = (\t1' -> TmApp t1' t2) <$> eval1 t1
 eval1 _ = Nothing
 
--- ---------------------------------------------------------------------------
--- モック実装 (TDD 用のスタブ)。テストを通すように自分で実装する。
--- ---------------------------------------------------------------------------
-
--- | 値かどうか。純粋な型無しラムダ計算では値はラムダ抽象のみ。
+-- 値はラムダ抽象のみ
 isVal :: Term -> Bool
-isVal _ = error "TODO: isVal"
+isVal (TmAbs _) = True
+isVal _ = False
 
--- | d 個シフト: ↑d (t)。自由変数だけを d ずらす (TAPL 定義 6.2.1)。
+-- d 個シフト: ↑d (t)
+-- 自由変数だけを d ずらす (TAPL 定義 6.2.1)
 termShift :: Int -> Term -> Term
-termShift _ _ = error "TODO: termShift"
+termShift d t = walk 0 t
+ where
+  walk :: Int -> Term -> Term
+  walk c (TmVar x) = if x >= c then TmVar (x + d) else TmVar x
+  walk c (TmAbs t1) = TmAbs (walk (c + 1) t1)
+  walk c (TmApp t1 t2) = TmApp (walk c t1) (walk c t2)
 
 -- | 代入: termSubst j s t = [j ↦ s] t (TAPL 定義 6.2.4)。
 termSubst :: Int -> Term -> Term -> Term
