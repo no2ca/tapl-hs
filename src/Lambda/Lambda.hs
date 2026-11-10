@@ -19,16 +19,26 @@ isVal _ = False
 -- d 個シフト: ↑d (t)
 -- 自由変数だけを d ずらす (TAPL 定義 6.2.1)
 termShift :: Int -> Term -> Term
-termShift d t = walk 0 t
+termShift d = walk 0
  where
   walk :: Int -> Term -> Term
   walk c (TmVar x) = if x >= c then TmVar (x + d) else TmVar x
   walk c (TmAbs t1) = TmAbs (walk (c + 1) t1)
   walk c (TmApp t1 t2) = TmApp (walk c t1) (walk c t2)
 
--- | 代入: termSubst j s t = [j ↦ s] t (TAPL 定義 6.2.4)。
+-- 代入: termSubst j s t = [j ↦ s] t (TAPL 定義 6.2.4)
+-- t のすべての j を s に置き換える
 termSubst :: Int -> Term -> Term -> Term
-termSubst _ _ _ = error "TODO: termSubst"
+termSubst j s = walk 0
+ where
+  -- c は外側から何番目の抽象か
+  walk :: Int -> Term -> Term
+  walk c (TmVar x) =
+    if x == j + c -- 置き換える変数名と一致するか
+      then termShift c s -- 抽象の内側に入った分 s をシフトする
+      else TmVar x -- 置き換えない場合
+  walk c (TmAbs t1) = TmAbs (walk (c + 1) t1)
+  walk c (TmApp t1 t2) = TmApp (walk c t1) (walk c t2)
 
 -- | β簡約用の代入: termSubstTop s t = ↑-1 ([0 ↦ ↑1 (s)] t)。
 termSubstTop :: Term -> Term -> Term
